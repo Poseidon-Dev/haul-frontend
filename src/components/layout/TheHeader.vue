@@ -1,45 +1,120 @@
 <template>
-    <header>
-        <nav>
-            <h1><router-link to="/">Equipment Transfers</router-link></h1>
-            <ul>
-                <li><router-link to="/equipment">Equipment</router-link></li>
-                <li><router-link to="/transfers">Transfers</router-link></li>
-                <li><router-link to="/messages">Messages</router-link></li>
-            </ul>
-        </nav>
-    </header>
+  <section class="equip-header">
+    <div>
+      <h2 class="title">Equipment</h2>
+    </div>
+    <div class="equip-buttons">
+      <ul>
+        <!-- <li><base-button>Reset</base-button></li> -->
+        <li v-if="currentPath == '/equipment'">
+          <base-button @click="someEvent" mode="green">Fetch</base-button>
+        </li>
+        <li v-if="currentPath == '/equipment'">
+          <base-button mode="filled" @click="sendToTransfers">Add</base-button>
+        </li>
+        <li v-if="currentPath == '/transfers'">
+          <base-button mode="filled" @click="removeFromTransfers"
+            >Remove</base-button
+          >
+        </li>
+        <li v-if="currentPath == '/transfers'">
+          <base-button mode="green" @click="removeFromTransfers"
+            >Submit</base-button
+          >
+        </li>
+      </ul>
+    </div>
+  </section>
 </template>
 
+<script>
+export default {
+  methods: {
+    sendToTransfers() {
+      const currentQueue = this.$store.getters['equipment/queueIn'];
+      for (let queueIndex in currentQueue) {
+        var item = currentQueue[queueIndex];
+        this.$store.dispatch('equipment/addToTransfers', item);
+        this.$store.dispatch('equipment/removeFromEquipment', item);
+        this.$store.dispatch('equipment/removeFromQueueIn', item);
+        this.$router.push('/transfers');
+        this.$notify({
+          type: 'success',
+          title: 'Sent to Transfer Queue',
+          text: item.equipment_id + ': ' + item.description,
+        });
+      }
+    },
+    removeFromTransfers() {
+      const currentQueue = this.$store.getters['equipment/queueOut'];
+      for (let queueIndex in currentQueue) {
+        var item = currentQueue[queueIndex];
+        this.$store.dispatch('equipment/addToEquipment', item);
+        this.$store.dispatch('equipment/removeFromTransfers', item);
+        this.$store.dispatch('equipment/removeFromQueueOut', item);
+        this.$notify({
+          type: 'error',
+          title: 'Removed from Transfer Queue',
+          text: item.equipment_id + ': ' + item.description,
+        });
+      }
+    },
+    someEvent() {
+      console.log('some event');
+      this.$store.dispatch('equipment/fetchEquipment');
+    },
+  },
+  computed: {
+    currentPath() {
+      return this.$route.path;
+    },
+  },
+};
+</script>
+
 <style scoped>
-    header {
-        width: 100%;
-        height: 10rem;
-        background-color: #30008d;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
+h1 {
+  margin: 0;
+}
 
-    header ul {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
+h1 a {
+  color: #f4fcf0;
+  margin: 0;
+}
 
-    a {
-        color: white;
-        margin: 0;;
-    }
+h1 a:hover,
+h1 a:active,
+h1 a.router-link-active {
+  border-color: transparent;
+}
 
-    a.router-link-active {
-        border: 1px solid green;
-    }
+li {
+  margin: 0 0.5rem;
+}
 
-    li {
-        margin: 0 0.5rem;
-    }
+.equip-header {
+  display: flex;
+  height: 5rem;
+  margin-left: 50px;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.equip-buttons ul {
+  margin-right: 50px;
+  display: flex;
+  flex-direction: row;
+}
+.equip-buttons li {
+  margin: 0.3rem 0;
+  padding: 0.75rem;
+  width: 130px;
+}
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+}
 </style>
