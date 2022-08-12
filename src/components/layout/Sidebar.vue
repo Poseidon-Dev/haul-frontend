@@ -1,6 +1,11 @@
 <template>
   <div class="sidebar">
     <h1 class="title">Haul</h1>
+    <sidebar-item to="/equipments">
+      <div>Dashboard</div>
+      <div><font-awesome-icon icon="fa-solid fa-gauge-simple-high" /></div>
+    </sidebar-item>
+    <br />
     <sidebar-item to="/equipment">
       <div>Equipment</div>
       <div><font-awesome-icon icon="fa-solid fa-toolbox" /></div>
@@ -17,9 +22,9 @@
       <div>History</div>
       <div><font-awesome-icon icon="fa-solid fa-clock-rotate-left" /></div>
     </sidebar-item>
-    <span class="collapse-icon" @click="toggleSidebar">Profile</span>
+    <!-- <span class="collapse-icon" @click="toggleSidebar">Profile</span>
     <span class="collapse-icon" @click="toggleSidebar">Settings</span>
-    <span class="collapse-icon" @click="toggleSidebar">Colla</span>
+    <span class="collapse-icon" @click="toggleSidebar">Colla</span> -->
   </div>
 </template>
 
@@ -40,7 +45,7 @@ export default {
 <style scoped>
 .sidebar {
   color: white;
-  background-color: #ef5b5b;
+  background-color: #303630;
   float: left;
   position: fixed;
   z-index: 1;
@@ -69,8 +74,9 @@ export default {
   margin: 0.5rem 1rem;
 }
 a.router-link-active {
-  background-color: #ef5b5b;
+  background-color: #24bcbc;
+  background-color: #ed4545;
   color: white;
-  border: 1px solid white;
+  border: none;
 }
 </style>

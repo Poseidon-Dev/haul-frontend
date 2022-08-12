@@ -9,7 +9,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 /* import specific icons */
-import { faArrowRightArrowLeft, faCalendarCheck, faClockRotateLeft, faToolbox } from '@fortawesome/free-solid-svg-icons'
+import { faArrowRightArrowLeft, faCalendarCheck, faClockRotateLeft, faToolbox, faGaugeSimpleHigh } from '@fortawesome/free-solid-svg-icons'
 
 import router from './router.js'
 import store from './store/index.js';
@@ -31,5 +31,6 @@ library.add(faArrowRightArrowLeft)
 library.add(faCalendarCheck)
 library.add(faClockRotateLeft)
 library.add(faToolbox)
+library.add(faGaugeSimpleHigh)
 
 app.mount('#app');
