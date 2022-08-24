@@ -25,6 +25,10 @@ export default {
   components: {
     AgGridVue,
   },
+  beforeCreate() {
+    // TODO: Get a loading spinner when necessary
+    this.$store.dispatch('equipment/fetchAllEquipments');
+  },
   setup() {
     const gridApi = ref(null); // Optional - for accessing Grid's API
 
@@ -32,8 +36,6 @@ export default {
     const onGridReady = (params) => {
       gridApi.value = params.api;
     };
-
-    // const rowData = reactive({}); // Set rowData to Array of Objects, one Object per Row
 
     // Each Column Definition results in one Column.
     const columnDefs = reactive({
@@ -43,21 +45,25 @@ export default {
           lockPosition: true,
           floatingFilter: false,
           flex: 1,
-          // cellRenderer: (params) => {
-          //   return `<input type='checkbox' ${params.value ? 'checked' : ''} />`;
-          // },
         },
         {
           headerName: 'ID',
           field: 'equipment_id',
           lockPosition: true,
           flex: 3,
+          sort: 'asc',
         },
         {
-          field: 'description',
+          headerName: 'Description',
+          field: 'description_1',
         },
         {
-          field: 'division',
+          headerName: 'Company',
+          field: 'company_name',
+        },
+        {
+          headerName: 'Division',
+          field: 'division_name',
         },
         { field: 'serial' },
         { field: 'model' },
@@ -92,14 +98,8 @@ export default {
       suppressMenu: true,
       debounceMs: 0,
       popupParent: document.body,
+      animateRows: true,
     };
-
-    // Example load data from sever
-    // onMounted(() => {
-    // fetch('http://172.31.227.197:5000/equip')
-    //   .then((result) => result.json())
-    //   .then((remoteRowData) => (rowData.value = remoteRowData));
-    // });
 
     return {
       onGridReady,
@@ -108,16 +108,8 @@ export default {
     };
   },
   computed: {
-    equipmentData: {
-      get() {
-        return this.$store.getters['equipment/equipment'];
-      },
-    },
-    queueData: {
-      get() {
-        console.log(this.$store.getters['equipment/queue']);
-        return this.$store.getters['equipment/queue'];
-      },
+    equipmentData() {
+      return this.$store.getters['equipment/equipment'];
     },
   },
   methods: {
@@ -126,10 +118,9 @@ export default {
     },
     addToQueueIn(event) {
       if (event.node.selected) {
-        this.$store.dispatch('equipment/addToQueueIn', event.data);
+        this.$store.dispatch('queues/addToQueueIn', event.data);
       } else if (!event.node.selected) {
-        console.log('deselected');
-        this.$store.dispatch('equipment/removeFromQueueIn', event.data);
+        this.$store.dispatch('queues/removeFromQueueIn', event.data);
       }
     },
   },

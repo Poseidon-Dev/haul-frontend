@@ -7,7 +7,9 @@
       <ul>
         <!-- <li><base-button>Reset</base-button></li> -->
         <li v-if="currentPath == '/equipment'">
-          <base-button @click="someEvent" mode="green">Fetch</base-button>
+          <base-button @click="fetchAllEquipments" mode="green"
+            >Refresh</base-button
+          >
         </li>
         <li v-if="currentPath == '/equipment'">
           <base-button mode="filled" @click="sendToTransfers">Add</base-button>
@@ -15,11 +17,6 @@
         <li v-if="currentPath == '/transfers'">
           <base-button mode="filled" @click="removeFromTransfers"
             >Remove</base-button
-          >
-        </li>
-        <li v-if="currentPath == '/transfers'">
-          <base-button mode="green" @click="removeFromTransfers"
-            >Submit</base-button
           >
         </li>
       </ul>
@@ -31,13 +28,13 @@
 export default {
   methods: {
     sendToTransfers() {
-      const currentQueue = this.$store.getters['equipment/queueIn'];
+      const currentQueue = this.$store.getters['queues/queueIn'];
       for (let queueIndex in currentQueue) {
         var item = currentQueue[queueIndex];
-        this.$store.dispatch('equipment/addToTransfers', item);
+        console.log(item);
+        this.$store.dispatch('queues/removeFromQueueIn', item);
         this.$store.dispatch('equipment/removeFromEquipment', item);
-        this.$store.dispatch('equipment/removeFromQueueIn', item);
-        this.$router.push('/transfers');
+        this.$store.dispatch('transfers/addToTransfers', item);
         this.$notify({
           type: 'success',
           title: 'Sent to Transfer Queue',
@@ -46,12 +43,12 @@ export default {
       }
     },
     removeFromTransfers() {
-      const currentQueue = this.$store.getters['equipment/queueOut'];
+      const currentQueue = this.$store.getters['queues/queueOut'];
       for (let queueIndex in currentQueue) {
         var item = currentQueue[queueIndex];
+        this.$store.dispatch('queues/removeFromQueueOut', item);
         this.$store.dispatch('equipment/addToEquipment', item);
-        this.$store.dispatch('equipment/removeFromTransfers', item);
-        this.$store.dispatch('equipment/removeFromQueueOut', item);
+        this.$store.dispatch('transfers/removeFromTransfers', item);
         this.$notify({
           type: 'error',
           title: 'Removed from Transfer Queue',
@@ -59,9 +56,8 @@ export default {
         });
       }
     },
-    someEvent() {
-      console.log('some event');
-      this.$store.dispatch('equipment/fetchEquipment');
+    fetchAllEquipments() {
+      this.$store.dispatch('equipment/fetchAllEquipments');
     },
   },
   computed: {

@@ -6,10 +6,11 @@ export default {
     namespaced: true,
     state() {
         return {
-            equipment: [],
-        };
+            queueIn: [],
+            queueOut: [],
+        }
     },
     mutations,
     actions,
-    getters,
+    getters
 };

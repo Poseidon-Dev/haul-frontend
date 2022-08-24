@@ -1,1 +1,5 @@
-export default {};
+export default {
+    transfers: state => {
+        return state.transfers
+    },
+};

@@ -5,7 +5,7 @@
 <script>
 export default {
   props: {
-    to: { type: String, required: false, default: '/' },
+    to: { type: String, required: false, default: '#' },
     mode: { type: String, required: false, default: null },
   },
 };

@@ -8,10 +8,5 @@ export default {
     transfers: state => {
         return state.transfers
     },
-    queueIn: state => {
-        return state.queueIn
-    },
-    queueOut: state => {
-        return state.queueOut
-    },
+
 };

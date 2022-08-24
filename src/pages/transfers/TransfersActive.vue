@@ -2,7 +2,7 @@
   <ag-grid-vue
     class="ag-theme-material"
     style="height: calc(100vh - 75px)"
-    :row-data="rowData"
+    :row-data="transferData"
     :columnDefs="columnDefs.value"
     :defaultColDef="defaultColDef"
     rowSelection="multiple"
@@ -10,7 +10,6 @@
     animateRows="true"
     @row-selected="rowWasSelected"
     @grid-ready="onGridReady"
-    @onClick="onSelectionChanged"
     @cell-value-changed="cellValueChanged"
   >
   </ag-grid-vue>
@@ -25,6 +24,10 @@ import { reactive, ref } from 'vue';
 export default {
   components: {
     AgGridVue,
+  },
+  beforeCreate() {
+    // TODO: Get a loading spinner when necessary
+    this.$store.dispatch('transfers/fetchTransfers');
   },
   setup() {
     const gridApi = ref(null); // Optional - for accessing Grid's API
@@ -42,46 +45,49 @@ export default {
           lockPosition: true,
           floatingFilter: false,
           flex: 1,
-          // cellRenderer: (params) => {
-          //   return `<input type='checkbox' ${params.value ? 'checked' : ''} />`;
-          // },
         },
         {
           headerName: 'ID',
           field: 'equipment_id',
           lockPosition: true,
           flex: 3,
+          sort: 'asc',
         },
         {
           field: 'description',
         },
-
-        { field: 'model' },
         {
-          field: 'model_year',
-          headerName: 'Year',
-          filter: 'agNumberColumnFilter',
-          flex: 2,
-        },
-        {
-          field: 'Division',
+          headerName: 'Division',
+          field: 'division_name',
           editable: true,
           cellEditor: 'agSelectCellEditor',
           cellEditorParams: {
             values: [
-              'Corporate',
               'Tucson',
               'Phoenix',
               'Hesperia',
               'Corona',
+              'Pipeline',
+              'Reno',
               'Carson',
               'Pacific',
               'Bullhead',
+              'Inland',
               'Drip',
             ],
-            cellHeight: 20,
-            cellWidth: 150,
           },
+        },
+        {
+          headerName: 'Requested',
+          field: 'ask_date',
+        },
+        {
+          headerName: 'Accepted',
+          field: 'accepted_date',
+        },
+        {
+          headerName: 'Completed',
+          field: 'completed_date',
         },
       ],
     });
@@ -95,38 +101,34 @@ export default {
       suppressMenu: true,
       debounceMs: 0,
       popupParent: document.body,
+      animateRows: true,
     };
 
     return {
       onGridReady,
       columnDefs,
       defaultColDef,
-      deselectRows: () => {
-        gridApi.value.deselectAll();
-      },
     };
   },
   computed: {
-    rowData: {
-      get() {
-        return this.$store.getters['equipment/transfers'];
-      },
+    transferData() {
+      return this.$store.getters['transfers/transfers'];
     },
   },
   methods: {
     rowWasSelected(event) {
+      console.log(event);
       this.addToQueueOut(event);
     },
     addToQueueOut(event) {
       if (event.node.selected) {
-        this.$store.dispatch('equipment/addToQueueOut', event.data);
+        this.$store.dispatch('queues/addToQueueOut', event.data);
       } else if (!event.node.selected) {
-        console.log('deselected');
-        this.$store.dispatch('equipment/removeFromQueueOut', event.data);
+        this.$store.dispatch('queues/removeFromQueueOut', event.data);
       }
     },
     cellValueChanged(event) {
-      this.$store.dispatch('equipment/updateTransferDate', event.data);
+      this.$store.dispatch('transfers/updateTransferDate', event.data);
     },
   },
 };

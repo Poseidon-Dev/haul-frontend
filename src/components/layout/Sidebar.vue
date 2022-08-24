@@ -1,6 +1,6 @@
 <template>
   <div class="sidebar">
-    <h1 class="title">Haul</h1>
+    <h1 class="title">APC Haul</h1>
     <sidebar-item to="/equipments">
       <div>Dashboard</div>
       <div><font-awesome-icon icon="fa-solid fa-gauge-simple-high" /></div>
